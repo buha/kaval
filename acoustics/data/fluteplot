@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+import matplotlib.pyplot as plt
+import sys
+import math
+import pandas as pd
+
+if __name__ == "__main__":
+
+    for n, f in enumerate(sys.argv[1:]):
+
+        fig = plt.figure()
+        df = pd.read_csv(f)
+
+        length = df['Length']
+        end_correction = 0.6 * 20.4
+        special = [343 / ((x + end_correction) / 1000) for x in length]
+        plt.plot(special, label="Theoretical frequency from length (Hz)")
+
+        h1 = df['H1']
+        special = [x for x in h1]
+        plt.plot(special, label="H1 (Hz)") 
+
+        plt.legend()
+
+    plt.show()
+
