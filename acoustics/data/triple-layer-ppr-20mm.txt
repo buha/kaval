@@ -1,0 +1,9 @@
+Outer diameter: 20.4 mm
+Inner diameter: 14.3 mm
+Wall thickness: 3.05 mm
+
+Used Spectroid on Android to obtain the frequency readings in Hz.
+FFT size: 4096
+Sampling rate: 96000 Hz
+Window: Hamming
+Decimations: 9 (0.18 Hz / bin)
