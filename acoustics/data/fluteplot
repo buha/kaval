@@ -12,7 +12,7 @@ if __name__ == "__main__":
         df = pd.read_csv(f)
 
         length = df['Length']
-        end_correction = 0.6 * 20.4
+        end_correction = 2 * 0.6 * 20.4
         special = [343 / ((x + end_correction) / 1000) for x in length]
         plt.plot(special, label="Theoretical frequency from length (Hz)")
 
