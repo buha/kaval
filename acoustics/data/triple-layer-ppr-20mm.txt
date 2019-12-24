@@ -1,6 +1,11 @@
+PPR characteristics:
+Triple layer
 Outer diameter: 20.4 mm
 Inner diameter: 14.3 mm
 Wall thickness: 3.05 mm
+
+PPR #1 is a flute that matches in length a Mansur reed Ney and a Turkish plum wood Kaval that I own, all being 770 mm in length.
+PPR #2 is a tube that I gradually cut small increments from until I fell on 12-TET frequencies, at which point I measured the length and 9 harmonics.
 
 Used Spectroid on Android to obtain the frequency readings in Hz.
 FFT size: 4096

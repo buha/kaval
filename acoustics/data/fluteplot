@@ -12,13 +12,25 @@ if __name__ == "__main__":
         df = pd.read_csv(f)
 
         length = df['Length']
+        sound_speed = 343
         end_correction = 2 * 0.6 * 20.4
-        special = [343 / ((x + end_correction) / 1000) for x in length]
-        plt.plot(special, label="Theoretical frequency from length (Hz)")
+        special = [sound_speed / ((x + end_correction) / 1000) for x in length]
+        plt.plot(length, special, marker='o', label="Theoretical frequency for D=20mm (Hz)")
+
+        note_name = df['Note']
+        note_value = df['12-TET H1']
+        maxlength = max(length)
+        for i, value in enumerate(note_value):
+            plt.axhline(y=value, linestyle=':')
+            plt.text(maxlength, value, note_name[i])
 
         h1 = df['H1']
         special = [x for x in h1]
-        plt.plot(special, label="H1 (Hz)") 
+        plt.plot(length, special, marker='o', label="PPR #2 H1 (Hz)")
+
+        plt.plot([770], [387], marker='o', label="Mansur H1 (Hz)")
+        plt.plot([770], [421], marker='o', label="PPR #1 H1 (Hz)")
+        plt.plot([770], [409], marker='o', label="Kaval H1 (Hz)")
 
         plt.legend()
 
