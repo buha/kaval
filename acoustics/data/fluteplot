@@ -6,16 +6,21 @@ import pandas as pd
 
 if __name__ == "__main__":
 
+    fig = plt.figure()
+
     for n, f in enumerate(sys.argv[1:]):
 
-        fig = plt.figure()
         df = pd.read_csv(f)
 
+        # Plot theoretical frequency
         length = df['Length']
+        D = df['D'][0]
+        d = df['d'][0]
+        g = df['g'][0]
         sound_speed = 343
-        end_correction = 2 * 0.6 * 20.4
-        special = [sound_speed / ((x + end_correction) / 1000) for x in length]
-        plt.plot(length, special, marker='o', label="Theoretical frequency for D=20mm (Hz)")
+        end_correction = 0.6 * d
+        frequency = [sound_speed / ((x + end_correction) / 1000) for x in length]
+        plt.plot(length, frequency, marker='o', label="Theoretical frequency for d={}mm (Hz)".format(d))
 
         note_name = df['Note']
         note_value = df['12-TET H1']
@@ -25,14 +30,18 @@ if __name__ == "__main__":
             plt.text(maxlength, value, note_name[i])
 
         h1 = df['H1']
-        special = [x for x in h1]
-        plt.plot(length, special, marker='o', label="PPR #2 H1 (Hz)")
+        frequency = [x for x in h1]
+        plt.plot(length, frequency, marker='o', label=f)
 
-        plt.plot([770], [387], marker='o', label="Mansur H1 (Hz)")
-        plt.plot([770], [421], marker='o', label="PPR #1 H1 (Hz)")
-        plt.plot([770], [409], marker='o', label="Kaval H1 (Hz)")
 
-        plt.legend()
+    # Plot some other flutes for comparison
+    plt.plot([770], [387], marker='o', label="Mansur H1 (Hz)")
+    plt.plot([770], [421], marker='o', label="PPR #1 H1 (Hz)")
+    plt.plot([770], [409], marker='o', label="Kaval H1 (Hz)")
+
+    plt.xlabel("Tube length (mm)")
+    plt.ylabel("Frequency (Hz)")
+    plt.legend()
 
     plt.show()
 
