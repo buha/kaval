@@ -1,0 +1,13 @@
+PPR characteristics:
+Triple layer
+Outer diameter: 25.6 mm
+Inner diameter: 17.6 mm
+Wall thickness: 4 mm
+
+PPR #3 is a tube that I gradually cut small increments from until I fell on 12-TET frequencies, at which point I measured the length and 9 harmonics.
+
+Used Spectroid on Android to obtain the frequency readings in Hz.
+FFT size: 4096
+Sampling rate: 96000 Hz
+Window: Hamming
+Decimations: 9 (0.18 Hz / bin)
