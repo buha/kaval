@@ -26,16 +26,17 @@ if __name__ == "__main__":
         frequency = [sound_speed / ((front_correction + l + end_correction) / 1000) for l in lrange]
         plt.plot(lrange, frequency, label="Theoretical frequency for d={}mm (Hz)".format(d))
 
-        note_name = df['Note']
-        note_value = df['12-TET H1']
-        maxlength = max(length)
-        for i, value in enumerate(note_value):
-            plt.axhline(y=value, linestyle=':')
-            plt.text(maxlength, value, note_name[i])
-
         h1 = df['H1']
         frequency = [x for x in h1]
         plt.plot(length, frequency, marker='o', label=f)
+
+    # Plot the 12-TET note names
+    note_name = df['Note']
+    note_value = df['12-TET H1']
+    maxlength = max(length)
+    for i, value in enumerate(note_value):
+        plt.axhline(y=value, linestyle=':')
+        plt.text(maxlength, value, note_name[i])
 
 
     # Plot some other flutes for comparison
