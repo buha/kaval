@@ -19,9 +19,16 @@ if __name__ == "__main__":
         D = df['D'][0]
         d = df['d'][0]
         g = df['g'][0]
+
+        # The speed of sound through air is approximately 343 m/s at normal room temperature, which is at 20 °C
         sound_speed = 343
-        end_correction = 0.6 * d
+
+        # On the Radiation of Sound from an Unflanged Circular Pipe
+        # by HAROLD LEVINE AND JULIAN. SCHVHNGER gives 0.6133 as end correction
+        end_correction = 0.6133 * d / 2
+
         front_correction = 33 # mm, experimental, needs explanation
+
         lrange = range(lmin, lmax, 1)
         frequency = [sound_speed / ((front_correction + l + end_correction) / 1000) for l in lrange]
         plt.plot(lrange, frequency, label="Theoretical frequency for d={}mm (Hz)".format(d))
