@@ -29,18 +29,25 @@ class Temperament:
         denominator = 1
         if(right):
             f = centerfreq
-            while f <= maxfreq:
+            while True:
                 f = centerfreq * 2 ** (denominator / divisions)
                 denominator += 1
-                temperament.append(f)
-
+                if f <= maxfreq:
+                    temperament.append(f)
+                else:
+                    break
+        
         denominator = 1
         if(left):
             f = centerfreq
-            while f >= minfreq:
+            while True:
                 f = centerfreq / 2 ** (denominator / divisions)
                 denominator += 1
-                temperament.append(f)
+                if f >= minfreq:
+                    temperament.append(f)
+                else:
+                    break 
+
 
         temperament.sort()
         return temperament
