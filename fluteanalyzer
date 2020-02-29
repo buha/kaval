@@ -17,15 +17,36 @@ Example:
 """
 import subprocess
 import os
+from ast import literal_eval
 
 try:
     from docopt import docopt
 except ImportError:
     exit("This software refuses to run until docopt is installed:\n$ pip install docopt")
 
+try:
+    import configparser
+except ImportError:
+    exit("This software refuses to run until configparser is installed:\n$ pip install configparser")
+
 def main(args):
-    wavef = args['FILE']
-    print("Hello")
+    filepath = args['FILE']
+
+    config = configparser.ConfigParser()
+    config.read(filepath)
+
+    lt = config.getfloat('tube','lt')
+    dt = config.getfloat('tube','dt')
+    gt = config.getfloat('tube','gt')
+    dle = config.getfloat('tube','dle')
+
+    hole_items = config.items("holes")
+    holes = [literal_eval(hole) for key, hole in hole_items]
+
+    # sort holes by first element (length)
+    holes.sort(key=lambda tup: tup[0])
+
+    print(holes)
 
 if __name__ == "__main__":
     try:
