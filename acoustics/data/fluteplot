@@ -31,15 +31,15 @@ if __name__ == "__main__":
 
         lrange = range(lmin, lmax, 1)
         frequency = [sound_speed / ((front_correction + l + end_correction) / 1000) for l in lrange]
-        plt.plot(lrange, frequency, label="Theoretical frequency for d={}mm (Hz)".format(d))
+        plt.plot(lrange, frequency, label="Theoretical H2 frequency for d={}mm (Hz)".format(d))
 
-        h1 = df['H1']
+        h1 = df['H2']
         frequency = [x for x in h1]
         plt.plot(length, frequency, marker='o', label=f)
 
     # Plot the 12-TET note names
     note_name = df['Note']
-    note_value = df['12-TET H1']
+    note_value = df['12-TET H2']
     maxlength = max(length)
     for i, value in enumerate(note_value):
         plt.axhline(y=value, linestyle=':')
@@ -47,9 +47,9 @@ if __name__ == "__main__":
 
 
     # Plot some other flutes for comparison
-    plt.plot([770], [387], marker='o', label="Mansur H1 (Hz)")
-    plt.plot([770], [421], marker='o', label="PPR #1 H1 (Hz)")
-    plt.plot([770], [409], marker='o', label="Kaval H1 (Hz)")
+    plt.plot([770], [387], marker='o', label="Mansur H2 (Hz)")
+    plt.plot([770], [421], marker='o', label="PPR #1 H2 (Hz)")
+    plt.plot([770], [409], marker='o', label="Kaval H2 (Hz)")
 
     plt.xlabel("Tube length (mm)")
     plt.ylabel("Frequency (Hz)")
