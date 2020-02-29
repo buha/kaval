@@ -19,6 +19,7 @@ Example:
 """
 import subprocess
 import os
+from math import log
 from ast import literal_eval
 
 try:
@@ -68,19 +69,19 @@ def main(args):
     tconfig['holes'] = holes
     t = tube.Tube(tconfig)
     a = t.analyze(registers=registers)
-    print("Hole\tPosition\tDiameter\tFrequency\tNearest\t\tDiff")
+    print("Hole\tPosition (mm)\tDiameter (mm)\tFrequency (Hz)\tNearest (Hz)\tDiff (cents)")
     for r in a:
         print(r)
         nearest = [temperament.nearest(f) for f in a[r]]
-        for i, f in enumerate(a[r]):
-            print("{0}\t{1}\t\t{2}\t\t{3:.2f}\t\t{4:.2f} ({5})\t{6}".format(
+        for i, f in enumerate(a[r]):          
+            print("{0}\t{1}\t\t{2}\t\t{3:.2f}\t\t{4:.2f} ({5})\t{6:.1f}".format(
                 i,
                 holes[i - 1][0] if i > 0 else '-',
                 holes[i - 1][1] if i > 0 else '-',
                 f,
                 nearest[i][1],
                 nearest[i][0],
-                0
+                temperament.offset(nearest[0][1], f)
             ))
 
 if __name__ == "__main__":

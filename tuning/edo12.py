@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from tuning.temperament import *
+from math import log
 # Equal division of the octave in 12 parts (12-EDO)
 class EDO12(Temperament):
 
@@ -43,3 +44,9 @@ class EDO12(Temperament):
         data = self.table()
         key, value = min(data.items(), key=lambda kv : abs(kv[1] - freq))
         return (key, value)
+
+    def offset(self, basefreq, freq):
+        diff = log(freq / basefreq, 2) * 1200 % 100
+        if diff > 50:
+            diff -= 100
+        return diff
