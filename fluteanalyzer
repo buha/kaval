@@ -29,6 +29,8 @@ try:
 except ImportError:
     exit("This software refuses to run until configparser is installed:\n$ pip install configparser")
 
+from acoustics import tube 
+
 def main(args):
     filepath = args['FILE']
 
@@ -44,9 +46,18 @@ def main(args):
     holes = [literal_eval(hole) for key, hole in hole_items]
 
     # sort holes by first element (length)
-    holes.sort(key=lambda tup: tup[0])
+    holes.sort(key=lambda tup: tup[0], reverse = True)
 
-    print(holes)
+    tconfig = dict()
+    tconfig['lt'] = lt
+    tconfig['dt'] = dt
+    tconfig['gt'] = gt
+    tconfig['dle'] = dle
+    tconfig['holes'] = holes
+    t = tube.Tube(tconfig)
+    a = t.analyze()
+    print('register1: ' + str(a['register1']))
+    print('register2: ' + str(a['register2']))
 
 if __name__ == "__main__":
     try:
