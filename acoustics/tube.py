@@ -38,7 +38,7 @@ class Tube:
             lengths.append(LA)
         
         frequencies = dict()
-        for n in range(1, registers):
+        for n in range(1, registers + 1):
             register = [n * self.c / 2 / l for l in lengths]
             register.sort()
             frequencies['register' + str(n)] = register

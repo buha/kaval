@@ -4,16 +4,18 @@ A tool to analyze the tuning of a flute.
 Takes dimensions as input and prints out acoustic analysis results.
 
 Usage:
-    fluteanalyzer FILE
+    fluteanalyzer [--temperament=<TEMP>] [--registers=<REG>] FILE
     fluteanalyzer (-v | --version)
     fluteanalyzer (-h | --help)
 
 Options:
-    -h --help           Show this screen.
-    -v --version        Show version.
+    -t --temperament=<TEMP> Tuning temperament. [default: edo12]
+    -r --registers=<REG>    Number of registers to analyze. [default: 2]
+    -h --help               Show this screen.
+    -v --version            Show version.
 
 Example:
-    fluteanalyzer mansur-ney.py
+    ./fluteanalyzer analyzer/template.analyze.conf --temperament edo12 --registers 2
 """
 import subprocess
 import os
@@ -29,10 +31,20 @@ try:
 except ImportError:
     exit("This software refuses to run until configparser is installed:\n$ pip install configparser")
 
-from acoustics import tube 
+from acoustics import tube
+from tuning import helper
+from tuning import temperament
+from tuning import edo12
 
 def main(args):
     filepath = args['FILE']
+    registers = int(args['--registers'])
+    temperament = args['--temperament']
+    if temperament != 'edo12':
+        print("Unknown tuning temperament {}".format(temperament))
+        return
+    
+    temperament = edo12.EDO12()
 
     config = configparser.ConfigParser()
     config.read(filepath)
@@ -55,9 +67,21 @@ def main(args):
     tconfig['dle'] = dle
     tconfig['holes'] = holes
     t = tube.Tube(tconfig)
-    a = t.analyze()
-    print('register1: ' + str(a['register1']))
-    print('register2: ' + str(a['register2']))
+    a = t.analyze(registers=registers)
+    print("Hole\tPosition\tDiameter\tFrequency\tNearest\t\tDiff")
+    for r in a:
+        print(r)
+        nearest = [temperament.nearest(f) for f in a[r]]
+        for i, f in enumerate(a[r]):
+            print("{0}\t{1}\t\t{2}\t\t{3:.2f}\t\t{4:.2f} ({5})\t{6}".format(
+                i,
+                holes[i - 1][0] if i > 0 else '-',
+                holes[i - 1][1] if i > 0 else '-',
+                f,
+                nearest[i][1],
+                nearest[i][0],
+                0
+            ))
 
 if __name__ == "__main__":
     try:

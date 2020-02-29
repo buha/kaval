@@ -15,19 +15,22 @@ class EDO12(Temperament):
                              format(l))
         self._a4freq = a4freq
         self._ipn = ipn
+        self._table = self._compute_table()
 
-    def table(self):
+    def _compute_table(self):
         t = self.equal(12, self._a4freq, 16.0, 8000.0) 
         pos = t.index(self._a4freq)
         rem = pos % 12
         ipnidx = 9 - rem 
         div = (pos - 9) // 12 # 9 stands for 10th element in ipn - 'La'
-        startname = self._ipn[ipnidx] + str(3 - div) # 3 stands for the octave of A4
         d = {}
         for i, note in enumerate(t):
             div = i // 12
             d[self._ipn[(ipnidx + i) % 12] + str(div)] = note
         return d
+
+    def table(self):
+        return self._table
 
     def filtered(self, callback):
         newDict = dict()
@@ -35,3 +38,8 @@ class EDO12(Temperament):
             if callback((key, value)):
                 newDict[key] = value
         return newDict
+
+    def nearest(self, freq):
+        data = self.table()
+        key, value = min(data.items(), key=lambda kv : abs(kv[1] - freq))
+        return (key, value)
