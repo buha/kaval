@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+"""
+A tool to analyze the tuning of a flute.
+Takes dimensions as input and prints out acoustic analysis results.
+
+Usage:
+    fluteanalyzer FILE
+    fluteanalyzer (-v | --version)
+    fluteanalyzer (-h | --help)
+
+Options:
+    -h --help           Show this screen.
+    -v --version        Show version.
+
+Example:
+    fluteanalyzer mansur-ney.py
+"""
+import subprocess
+import os
+
+try:
+    from docopt import docopt
+except ImportError:
+    exit("This software refuses to run until docopt is installed:\n$ pip install docopt")
+
+def main(args):
+    wavef = args['FILE']
+    print("Hello")
+
+if __name__ == "__main__":
+    try:
+        version = str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8').rstrip()
+        modified = str(subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no']), 'utf-8')
+        scriptname = os.path.basename(__file__)
+        version = "{}{}".format(version, '*' if scriptname in modified else '')
+    except Exception as e:
+        version = 'unknown'
+    
+    args = docopt(__doc__, version=version)
+    main(args)
