@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+from tuning import edo12
+t = edo12.EDO12()
+headers = t._ipn
+headers.insert(0, 'Octave')
+for h in headers:
+    print(h, end='\t')
+print('')
+freqs = t.table()
+for i, f in enumerate(freqs):
+    # print(i)
+    if i % 12 == 0:
+        print('\n{}'.format(i // 12), end='\t')
+    print("{0:.2f}".format(freqs[f]), end='\t')
+print('')
