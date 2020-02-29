@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from temperament import Temperament
+from tuning.temperament import *
 # Equal division of the octave in 12 parts (12-EDO)
 class EDO12(Temperament):
 

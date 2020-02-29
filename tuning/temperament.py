@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from util import *
+from tuning.helper import *
 class Temperament:
     def equal(self, divisions, centerfreq, minfreq, maxfreq):
         if not isinteger(divisions) or divisions < 2:

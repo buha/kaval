@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import sys
 import math
 import pandas as pd
+from tuning import helper
+from tuning import temperament
+from tuning import edo12
 
 if __name__ == "__main__":
 
