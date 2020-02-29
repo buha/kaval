@@ -28,3 +28,10 @@ class EDO12(Temperament):
             div = i // 12
             d[self._ipn[(ipnidx + i) % 12] + str(div)] = note
         return d
+
+    def filtered(self, callback):
+        newDict = dict()
+        for (key, value) in self.table().items():
+            if callback((key, value)):
+                newDict[key] = value
+        return newDict

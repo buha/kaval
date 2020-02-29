@@ -11,6 +11,8 @@ if __name__ == "__main__":
 
     fig = plt.figure()
 
+    freqlist = []
+
     for n, f in enumerate(sys.argv[1:]):
 
         df = pd.read_csv(f)
@@ -38,16 +40,20 @@ if __name__ == "__main__":
 
         h1 = df['H2']
         frequency = [x for x in h1]
+        freqlist += frequency
         plt.plot(length, frequency, marker='o', label=f)
 
     # Plot the 12-TET note names
-    note_name = df['Note']
-    note_value = df['12-TET H2']
+    freq_min = min(freqlist)
+    freq_max = max(freqlist)
+    t = edo12.EDO12()
+    t = t.filtered(lambda elem : elem[1] >= freq_min and elem[1] <= freq_max)
+    note_name = list(t.keys())
+    note_value = list(t.values())
     maxlength = max(length)
     for i, value in enumerate(note_value):
         plt.axhline(y=value, linestyle=':')
         plt.text(maxlength, value, note_name[i])
-
 
     # Plot some other flutes for comparison
     plt.plot([770], [387], marker='o', label="Mansur H2 (Hz)")
