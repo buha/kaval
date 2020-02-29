@@ -13,6 +13,13 @@ class Tube:
         # as the end correction of a tube with diameter << wavelength.
         self.dlt = 0.6133 * self.dt / 2
 
+        if self.dle == None:
+            # In this case, we're dealing with a tube that is not blown by
+            # player's lips but is somehow vibrating openly, so apply the
+            # end correction for both ends.
+            self.dle = 0
+            self.dlt = self.dlt * 2
+
         # Cris Forster - Musical Mathematics, Eq. 8.20
         lengths = [self.dle + self.lt + self.dlt]
         
@@ -31,7 +38,7 @@ class Tube:
             lengths.append(LA)
         
         frequencies = dict()
-        for n in range(registers):
+        for n in range(1, registers):
             register = [n * self.c / 2 / l for l in lengths]
             register.sort()
             frequencies['register' + str(n)] = register

@@ -1,0 +1,80 @@
+#!/usr/bin/python3
+"""
+A tool to determing the embouchure correction for a given tube.
+To use this, you will need to measure the tube length (lt),
+tube inner diameter (dt), frequency of the fundamental when 
+rim blowing as in a Ney or Kaval (fb) and optionally, the 
+resonant frequency (fr) of the tube when rapidly tapping onto its
+end to sustain a vibrating air column.
+
+The last parameter is optional because it can be deduced theoretically.
+
+The formula I deduced for calculating the embouchure correction is :
+
+dle = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
+
+And it was obtained by dividing the two half-wavelength formulas in each
+vibrating mode:
+
+fb = sound_speed / (2 * (lt + dle + dlt))
+fr = sound_speed / (2 * (lt + 2 * dlt))
+
+Usage:
+    embouchure (--lt=<length>) (--dt=<diameter>) (--fb=<blow>)
+               [--fr=<resonant>]
+    embouchure (-v | --version)
+    embouchure (-h | --help)
+
+Options:
+    -h --help           Show this screen.
+    -v --version        Show version.
+    --lt=<length>       Tube geometric length (mm).
+    --dt=<diameter>     Tube inner diameter (assumed constant, mm).
+    --fb=<blow>         Fundamental frequency when rim-blowing.
+    --fr=<resonant>     Fundamental resonant frequency of the tube.
+
+Example:
+    embouchure --lt 770 --dt 14.3 --fb 210 --fr 222.145
+"""
+import subprocess
+import os
+from acoustics import tube
+
+try:
+    from docopt import docopt
+except ImportError:
+    exit("This software refuses to run until docopt is installed:\n$ pip install docopt")
+
+def main(args):
+    lt = float(args['--lt'])
+    dt = float(args['--dt'])
+    fb = float(args['--fb'])
+    dlt = 0.6133 * dt / 2
+    fr = args['--fr']
+    if fr is None:
+        tconfig = dict()
+        tconfig['lt'] = lt
+        tconfig['dt'] = dt
+        tconfig['gt'] = None
+        tconfig['dle'] = None
+        tconfig['holes'] = []
+        t = tube.Tube(tconfig)
+        a = t.analyze()
+        fr = a['register1'][0]
+    else:
+        fr = float(fr)
+
+    correction = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
+    print("{0:.2f} mm".format(correction))
+
+if __name__ == "__main__":
+    try:
+        version = str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8').rstrip()
+        modified = str(subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no']), 'utf-8')
+        scriptname = os.path.basename(__file__)
+        version = "{}{}".format(version, '*' if scriptname in modified else '')
+    except Exception as e:
+        version = 'unknown'
+    
+    args = docopt(__doc__, version=version)
+    main(args)
