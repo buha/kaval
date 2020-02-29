@@ -27,7 +27,7 @@ if __name__ == "__main__":
         # by HAROLD LEVINE AND JULIAN. SCHVHNGER gives 0.6133 as end correction
         end_correction = 0.6133 * d / 2
 
-        front_correction = 33 # mm, experimental, needs explanation
+        front_correction = 36 # mm, experimental, needs explanation
 
         lrange = range(lmin, lmax, 1)
         frequency = [sound_speed / ((front_correction + l + end_correction) / 1000) for l in lrange]
