@@ -9,10 +9,10 @@ Usage:
     fluteanalyzer (-h | --help)
 
 Options:
-    -t --temperament=<TEMP> Tuning temperament. [default: edo12]
-    -r --registers=<REG>    Number of registers to analyze. [default: 2]
-    -h --help               Show this screen.
-    -v --version            Show version.
+    -t --temperament=<TEMP>  Tuning temperament. [default: edo12]
+    -r --registers=<REG>     Number of registers to analyze. [default: 2]
+    -h --help                Show this screen.
+    -v --version             Show version.
 
 Example:
     ./fluteanalyzer analyzer/template.analyze.conf --temperament edo12 --registers 2
