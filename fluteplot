@@ -1,5 +1,21 @@
 #!/usr/bin/python3
-import matplotlib.pyplot as plt
+"""
+Plot theoretical vs measured frequency for flute
+Usage:
+    fluteplot [--register=<reg>] FILES...
+    fluteplot (-v | --version)
+    fluteplot (-h | --help)
+
+Options:
+    -h --help           Show this screen.
+    -v --version        Show version.
+    --register=<reg>    Register number. [default: 1]
+
+Example:
+    embouchure --lt 770 --dt 14.3 --fb 210 --fr 222.145
+"""
+import subprocess
+import os
 import sys
 import math
 import pandas as pd
@@ -8,14 +24,25 @@ from tuning import temperament
 from tuning import edo12
 from acoustics import tube
 
-if __name__ == "__main__":
+try:
+    from docopt import docopt
+except ImportError:
+    exit("This software refuses to run until docopt is installed:\n$ pip install docopt")
 
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    exit("This software refuses to run until matplotlib is installed:\n$ pip install matplotlib")
+
+
+def main(args):
+    register = int(args['--register'])
     fig = plt.figure()
 
     freqlist = []
     ltlist = []
 
-    for n, f in enumerate(sys.argv[1:]):
+    for n, f in enumerate(args['FILES']):
 
         df = pd.read_csv(f)
 
@@ -39,13 +66,14 @@ if __name__ == "__main__":
         for l in lrange:
             tconfig['lt'] = l
             t = tube.Tube(tconfig)
-            a = t.analyze(registers=2)
-            fr = a['register1'][0]
+            a = t.analyze(registers=register)
+            fr = a['register' + str(register)][0]
             frequencies.append(fr)
 
-        plt.plot(lrange, frequencies, label="Theoretical H1 frequencies for d={}mm (Hz)".format(dt))
+        plt.plot(lrange, frequencies, 
+                 label="Theoretical H{} frequencies for d={}mm (Hz)".format(register, dt))
 
-        h1 = df['H1']
+        h1 = df['H' + str(register)]
         frequencies = [x for x in h1]
         plt.plot(lt, frequencies, marker='o', label=f)
 
@@ -76,3 +104,14 @@ if __name__ == "__main__":
 
     plt.show()
 
+if __name__ == "__main__":
+    try:
+        version = str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8').rstrip()
+        modified = str(subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no']), 'utf-8')
+        scriptname = os.path.basename(__file__)
+        version = "{}{}".format(version, '*' if scriptname in modified else '')
+    except Exception as e:
+        version = 'unknown'
+    
+    args = docopt(__doc__, version=version)
+    main(args)
