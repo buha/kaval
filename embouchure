@@ -21,7 +21,7 @@ fr = sound_speed / (2 * (lt + 2 * dlt))
 
 Usage:
     embouchure (--lt=<length>) (--dt=<diameter>) (--fb=<blow>)
-               [--fr=<resonant>]
+               [--fr=<resonant> | --harmonic=<harm>]
     embouchure (-v | --version)
     embouchure (-h | --help)
 
@@ -32,6 +32,7 @@ Options:
     --dt=<diameter>     Tube inner diameter (assumed constant, mm).
     --fb=<blow>         Fundamental frequency when rim-blowing.
     --fr=<resonant>     Fundamental resonant frequency of the tube.
+    --harmonic=<harm>   Harmonic number (1 is the fundamental). [default: 1]
 
 Example:
     embouchure --lt 770 --dt 14.3 --fb 210 --fr 222.145
@@ -49,6 +50,7 @@ def main(args):
     lt = float(args['--lt'])
     dt = float(args['--dt'])
     fb = float(args['--fb'])
+    harmonic = int(args['--harmonic'])
     dlt = 0.6133 * dt / 2
     fr = args['--fr']
     if fr is None:
@@ -59,8 +61,10 @@ def main(args):
         tconfig['dle'] = None
         tconfig['holes'] = []
         t = tube.Tube(tconfig)
-        a = t.analyze()
-        fr = a['register1'][0]
+        a = t.analyze(registers=harmonic)
+        key = 'register' + str(harmonic)
+        fr = a[key][0]
+        print("using resonant frequency fr = {0:.2f} Hz".format(fr))
     else:
         fr = float(fr)
 
