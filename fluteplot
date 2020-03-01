@@ -6,62 +6,72 @@ import pandas as pd
 from tuning import helper
 from tuning import temperament
 from tuning import edo12
+from acoustics import tube
 
 if __name__ == "__main__":
 
     fig = plt.figure()
 
     freqlist = []
+    ltlist = []
 
     for n, f in enumerate(sys.argv[1:]):
 
         df = pd.read_csv(f)
 
-        # Plot theoretical frequency
-        length = df['Length']
-        lmin = min(length)
-        lmax = max(length)
-        D = df['D'][0]
-        d = df['d'][0]
-        g = df['g'][0]
+        # Get info from .csv
+        lt = df['Length']
+        lmin = min(lt)
+        lmax = max(lt)
+        Dt = df['D'][0]
+        dt = df['d'][0]
+        gt = df['g'][0]
 
-        # The speed of sound through air is approximately 343 m/s at normal room temperature, which is at 20 °C
-        sound_speed = 343
-
-        # On the Radiation of Sound from an Unflanged Circular Pipe
-        # by HAROLD LEVINE AND JULIAN. SCHVHNGER gives 0.6133 as end correction
-        end_correction = 0.6133 * d / 2
-
-        front_correction = 50 # mm, experimental, needs explanation
-
+        # Use tube model to generate frequencies - length curve
         lrange = range(lmin, lmax, 1)
-        frequency = [sound_speed / ((front_correction + l + end_correction) / 1000) for l in lrange]
-        plt.plot(lrange, frequency, label="Theoretical H2 frequency for d={}mm (Hz)".format(d))
+        tconfig = dict()
+        tconfig['dt'] = dt
+        tconfig['gt'] = gt
+        tconfig['dle'] = 55 # TODO: adjust model with latest findings
+        tconfig['holes'] = []
 
-        h1 = df['H2']
-        frequency = [x for x in h1]
-        freqlist += frequency
-        plt.plot(length, frequency, marker='o', label=f)
+        frequencies = []
+        for l in lrange:
+            tconfig['lt'] = l
+            t = tube.Tube(tconfig)
+            a = t.analyze(registers=2)
+            fr = a['register1'][0]
+            frequencies.append(fr)
+
+        plt.plot(lrange, frequencies, label="Theoretical H1 frequencies for d={}mm (Hz)".format(dt))
+
+        h1 = df['H1']
+        frequencies = [x for x in h1]
+        plt.plot(lt, frequencies, marker='o', label=f)
+
+        freqlist += frequencies
+        ltlist += list(lt)
 
     # Plot the 12-TET note names
+    freqlist = [x for x in freqlist if x == x] # clean nan (breaks min/max)
     freq_min = min(freqlist)
     freq_max = max(freqlist)
     t = edo12.EDO12()
     t = t.filtered(lambda elem : elem[1] >= freq_min and elem[1] <= freq_max)
     note_name = list(t.keys())
     note_value = list(t.values())
-    maxlength = max(length)
+    maxlength = max(ltlist)
     for i, value in enumerate(note_value):
         plt.axhline(y=value, linestyle=':')
         plt.text(maxlength, value, note_name[i])
 
     # Plot some other flutes for comparison
-    plt.plot([770], [387], marker='o', label="Mansur H2 (Hz)")
-    plt.plot([770], [421], marker='o', label="PPR #1 H2 (Hz)")
-    plt.plot([770], [409], marker='o', label="Kaval H2 (Hz)")
+    # plt.plot([770], [387], marker='o', label="Mansur H2 (Hz)")
+    # plt.plot([770], [421], marker='o', label="PPR #1 H2 (Hz)")
+    # plt.plot([770], [409], marker='o', label="Kaval H2 (Hz)")
 
     plt.xlabel("Tube length (mm)")
-    plt.ylabel("Frequency (Hz)")
+    plt.ylabel("frequencies (Hz)")
     plt.legend()
 
     plt.show()
