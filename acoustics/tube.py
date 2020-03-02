@@ -12,7 +12,7 @@ class Tube:
         # On the Radiation of Sound from an Unflanged Circular Pipe
         # by HAROLD LEVINE AND JULIAN. SCHVINGER gives 0.6133 * radius 
         # as the end correction of a tube with diameter << wavelength.
-        self.dlt = 0.6133 * self.dt
+        self.dlt = 0.6133 * self.dt / 2
 
         if self.dle == None:
             # In this case, we're dealing with a tube that is not blown by
