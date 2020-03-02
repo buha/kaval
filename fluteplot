@@ -67,7 +67,7 @@ def main(args):
             tconfig['lt'] = l
             t = tube.Tube(tconfig)
             a = t.analyze(registers=register)
-            fr = a['register' + str(register)][0]
+            fr = a['register' + str(register)]['frequency'][0]
             frequencies.append(fr)
 
         plt.plot(lrange, frequencies, 

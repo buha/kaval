@@ -51,25 +51,25 @@ def main(args):
     dt = float(args['--dt'])
     fb = float(args['--fb'])
     harmonic = int(args['--harmonic'])
-    dlt = 0.6133 * dt / 2
     fr = args['--fr']
     if fr is None:
         tconfig = dict()
         tconfig['lt'] = lt
         tconfig['dt'] = dt
         tconfig['gt'] = None
-        tconfig['dle'] = None
         tconfig['holes'] = []
         t = tube.Tube(tconfig)
-        a = t.analyze(registers=harmonic)
+        a = t.analyze(registers=harmonic, blown=False)
         key = 'register' + str(harmonic)
-        fr = a[key][0]
+        fr = a[key]['frequency'][0]
         print("using resonant frequency fr = {0:.2f} Hz".format(fr))
+        dlt = a[key]['end'][0]
     else:
         fr = float(fr)
+        dlt = 0.6133 * dt / 2
 
-    correction = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
-    print("{0:.2f} mm".format(correction))
+    dle = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
+    print("{0:.2f} mm".format(dle))
 
 if __name__ == "__main__":
     try:

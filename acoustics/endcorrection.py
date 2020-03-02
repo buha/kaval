@@ -18,6 +18,6 @@ class EndCorrection:
         index = 2 * scipy.pi * radius / wavelength
         ratio = self.f(index)
         ret = ratio * radius
-        print("Using end correction {0:.2f} with a radio of {1:.2f} for wavelength {2} at index {3}".format(ret, ratio, wavelength, index))
+        # print("Using end correction {0:.2f} with a radio of {1:.2f} for wavelength {2} at index {3}".format(ret, ratio, wavelength, index))
         return ret
 
