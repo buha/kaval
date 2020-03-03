@@ -10,6 +10,9 @@ class Tube:
         self.dleratio = 1.059 # TODO: move in config
         self.EC = EndCorrection()
 
+    def closed_correction(self, holes):
+        return sum([1 / 4 * self.gt * (h[1] / self.dt) ** 2 for h in holes])
+
     def analyze(self, registers=3, blown=True):
         a = dict()
         for n in range(1, registers + 1):
@@ -25,19 +28,25 @@ class Tube:
             else:
                 dle = (self.dleratio - (self.lt + dlt) / (self.lt + 2 * dlt)) * (self.lt + 2 * dlt)
 
+            dlc = self.closed_correction(self.holes)
+
             # Cris Forster - Musical Mathematics, Eq. 8.20
-            lengths = [dle + self.lt + dlt]
+            lengths = [dle + dlc + self.lt + dlt]
             endcorrections = [dlt]
             embouchures = [dle]
             holecorrections = [0]
+            closedholes = [dlc]
 
             # compute the acoustic lengths of air columns at each hole
             for i, h in enumerate(self.holes):
+                dlc = self.closed_correction(self.holes[i+1:])
+                closedholes.append(dlc)
+
                 # Cris Forster - Musical Mathematics, Eq. 8.14
                 # LBh = (self.gt + h[1]) * (self.dt / h[1]) ** 2 - 0.45 * self.dt
 
                 # Cris Forster - Musical Mathematics, Eq. 8.23
-                LL = h[0] + dle
+                LL = h[0] + dlc + dle
                 # Cris Forster - Musical Mathematics, Eq. 8.24 and 8.25
                 LT = lengths[i]
 
@@ -50,7 +59,7 @@ class Tube:
 
                 # Cris Forster - Musical Mathematics, Eq. 8.22
                 # based on Nederveen, Acoustical Aspects of Woodwind instruments, Eq. 32.14
-                LA = LL + LBh #* (LT - LL) / (LT - LL + LBh)
+                LA = LL + LBh * (LT - LL) / (LT - LL + LBh)
                 lengths.append(LA)
 
                 dlt = self.EC.get(self.dt / 2, 2 * LA / n)
@@ -69,6 +78,7 @@ class Tube:
             b['embouchure'] = embouchures
             b['length'] = lengths
             b['hole'] = holecorrections
+            b['closed'] = closedholes
             a['register' + str(n)] = b
 
         return a
