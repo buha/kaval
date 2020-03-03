@@ -8,6 +8,7 @@ class Tube:
         self.holes = config['holes']
         self.c = 346 * 1000 # TODO: move in config
         self.dleratio = 1.059 # TODO: move in config
+        self.dle = config['dle']
         self.EC = EndCorrection()
 
     def closed_correction(self, holes):
@@ -27,6 +28,7 @@ class Tube:
                 dle = dlt
             else:
                 dle = (self.dleratio - (self.lt + dlt) / (self.lt + 2 * dlt)) * (self.lt + 2 * dlt)
+                dle = self.dle
 
             dlc = self.closed_correction(self.holes)
 
@@ -68,6 +70,7 @@ class Tube:
                     dle = dlt
                 else:
                     dle = (self.dleratio - (LA + dlt) / (LA + 2 * dlt)) * (LA + 2 * dlt)
+                    dle = self.dle
                 embouchures.append(dle)
 
             frequencies = [n * self.c / 2 / l for l in lengths]
