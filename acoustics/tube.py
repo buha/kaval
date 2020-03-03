@@ -1,4 +1,5 @@
 from .endcorrection import EndCorrection
+from math import sqrt
 class Tube:
     def __init__(self, config):
         self.lt = config['lt']
@@ -6,7 +7,7 @@ class Tube:
         self.gt = config['gt']
         self.holes = config['holes']
         self.c = 346 * 1000 # TODO: move in config
-        self.dleratio = 1.059
+        self.dleratio = 1.059 # TODO: move in config
         self.EC = EndCorrection()
 
     def analyze(self, registers=3, blown=True):
@@ -28,18 +29,28 @@ class Tube:
             lengths = [dle + self.lt + dlt]
             endcorrections = [dlt]
             embouchures = [dle]
+            holecorrections = [0]
 
             # compute the acoustic lengths of air columns at each hole
             for i, h in enumerate(self.holes):
                 # Cris Forster - Musical Mathematics, Eq. 8.14
-                LBh = (self.gt + h[1]) * (self.dt / h[1]) ** 2 - 0.45 * self.dt
+                # LBh = (self.gt + h[1]) * (self.dt / h[1]) ** 2 - 0.45 * self.dt
+
                 # Cris Forster - Musical Mathematics, Eq. 8.23
                 LL = h[0] + dle
                 # Cris Forster - Musical Mathematics, Eq. 8.24 and 8.25
                 LT = lengths[i]
+
+                if i > 0:
+                    z = self.holes[i-1][0] - h[0]
+                else:
+                    z = self.lt - h[0]
+                LBh = (z/2) * (sqrt(1 + (4/z) * (self.gt + 3/4 * h[1]) * (self.dt/h[1]) ** 2) -1)
+                holecorrections.append(LBh)
+
                 # Cris Forster - Musical Mathematics, Eq. 8.22
                 # based on Nederveen, Acoustical Aspects of Woodwind instruments, Eq. 32.14
-                LA = LL + LBh * (LT - LL) / (LT - LL + LBh)
+                LA = LL + LBh #* (LT - LL) / (LT - LL + LBh)
                 lengths.append(LA)
 
                 dlt = self.EC.get(self.dt / 2, 2 * LA / n)
@@ -57,6 +68,7 @@ class Tube:
             b['end'] = endcorrections
             b['embouchure'] = embouchures
             b['length'] = lengths
+            b['hole'] = holecorrections
             a['register' + str(n)] = b
 
         return a
