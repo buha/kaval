@@ -30,8 +30,15 @@ class Tube:
 
             dlc = self.closed_correction(self.holes)
 
+            # Account for wall loss
+            # I never found a formula for this so I figured out this approximation.
+            # Wall loss is more at smaller bore diameters and is naturally more
+            # for longer tube lengths.
+            dlw = (2 / self.dt) ** 2 * self.lt
+            #print("adding dlw = {} with dlw / lt = {}".format(dlw, dlw / self.lt))
+
             # Cris Forster - Musical Mathematics, Eq. 8.20
-            lengths = [dle + dlc + self.lt + dlt]
+            lengths = [dle + dlw + dlc + self.lt + dlt]
             endcorrections = [dlt]
             embouchures = [dle]
             holecorrections = [0]

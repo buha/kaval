@@ -59,7 +59,7 @@ def main(args):
         tconfig = dict()
         tconfig['dt'] = dt
         tconfig['gt'] = gt
-        tconfig['dle'] = 55 # TODO: adjust model with latest findings
+        tconfig['dle'] = 30 # TODO: adjust model with latest findings
         tconfig['holes'] = []
 
         frequencies = []
