@@ -11,7 +11,7 @@ The last parameter is optional because it can be deduced theoretically.
 
 The formula I deduced for calculating the embouchure correction is :
 
-dle = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
+dle = (fr / fb - 1) * lt + (2 * fr / fb - 1) * dlt
 
 And it was obtained by dividing the two half-wavelength formulas in each
 vibrating mode:
@@ -57,6 +57,7 @@ def main(args):
         tconfig['lt'] = lt
         tconfig['dt'] = dt
         tconfig['gt'] = None
+        tconfig['dle'] = None
         tconfig['holes'] = []
         t = tube.Tube(tconfig)
         a = t.analyze(registers=harmonic, blown=False)
@@ -68,7 +69,7 @@ def main(args):
         fr = float(fr)
         dlt = 0.6133 * dt / 2
 
-    dle = (fr / fb - (lt + dlt) / (lt + 2 * dlt)) * (lt + 2 * dlt)
+    dle = (fr / fb - 1) * lt + (2 * fr / fb - 1) * dlt
     print("{0:.2f} mm".format(dle))
 
 if __name__ == "__main__":
