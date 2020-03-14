@@ -65,11 +65,13 @@ def main(args):
         fr = a[key]['frequency'][0]
         print("using resonant frequency fr = {0:.2f} Hz".format(fr))
         dlt = a[key]['end'][0]
+        dlw = a[key]['wall'][0]
     else:
         fr = float(fr)
         dlt = 0.6133 * dt / 2
 
-    dle = (fr / fb - 1) * lt + (2 * fr / fb - 1) * dlt
+    #dle = (fr / fb - 1) * lt + (2 * fr / fb - 1) * dlt
+    dle = (fr / fb - 1) * (lt + 2 * dlt + dlw) + dlt
     print("{0:.2f} mm".format(dle))
 
 if __name__ == "__main__":

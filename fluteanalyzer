@@ -69,12 +69,12 @@ def main(args):
     tconfig['holes'] = holes
     t = tube.Tube(tconfig)
     a = t.analyze(registers=registers)
-    print("Hole\tPosition (mm)\tDiameter (mm)\tFrequency (Hz)\tNearest (Hz)\tDiff (cents)\tEmbouchure\tClosed holes\tEnd\tHole\tEquiv. Length")
+    print("Hole\tPosition (mm)\tDiameter (mm)\tFrequency (Hz)\tNearest (Hz)\tDiff (cents)\tEmbouchure\tWalls\tClosed holes\tEnd\tHole\tEquiv. Length")
     for r in a:
         print(r)
         nearest = [temperament.nearest(f) for f in a[r]['frequency']]
         for i, f in enumerate(a[r]['frequency']):
-            print("{0}\t{1}\t\t{2}\t\t{3:.2f}\t\t{4:.2f} ({5})\t{6:.1f}\t\t{7:.2f}\t\t{8:.2f}\t\t{9:.3f}\t{10:.2f}\t{11:.2f}".format(
+            print("{0}\t{1}\t\t{2}\t\t{3:.2f}\t\t{4:.2f} ({5})\t{6:.1f}\t\t{7:.2f}\t\t{8:.2f}\t{9:.2f}\t\t{10:.3f}\t{11:.2f}\t{12:.2f}".format(
                 i,
                 holes[i - 1][0] if i > 0 else '-',
                 holes[i - 1][1] if i > 0 else '-',
@@ -83,6 +83,7 @@ def main(args):
                 nearest[i][0],
                 temperament.offset(nearest[0][1], f),
                 a[r]['embouchure'][i],
+                a[r]['wall'][i],
                 a[r]['closed'][i],
                 a[r]['end'][i],
                 a[r]['hole'][i],

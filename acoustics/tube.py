@@ -43,6 +43,7 @@ class Tube:
             embouchures = [dle]
             holecorrections = [0]
             closedholes = [dlc]
+            walls = [dlw]
 
             # compute the acoustic lengths of air columns at each hole
             for i, h in enumerate(self.holes):
@@ -52,8 +53,11 @@ class Tube:
                 # Cris Forster - Musical Mathematics, Eq. 8.14
                 # LBh = (self.gt + h[1]) * (self.dt / h[1]) ** 2 - 0.45 * self.dt
 
+                dlw = (2 / self.dt) ** 2 * h[0]
+                walls.append(dlw)
+
                 # Cris Forster - Musical Mathematics, Eq. 8.23
-                LL = h[0] + dlc + dle
+                LL = h[0] + dlw + dlc + dle
                 # Cris Forster - Musical Mathematics, Eq. 8.24 and 8.25
                 LT = lengths[i]
 
@@ -86,6 +90,7 @@ class Tube:
             b['length'] = lengths
             b['hole'] = holecorrections
             b['closed'] = closedholes
+            b['wall'] = walls
             a['register' + str(n)] = b
 
         return a
